@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react'
 const numRows = 20
 const numCols = 20
 const cellSize = '5px'
-let interval: any
+let intervalId: any
 
 const App: React.FC = () => {
   // Creates the grid matrix filled with dead cells
@@ -12,17 +12,14 @@ const App: React.FC = () => {
   for (let i = 0; i < arr.length; i++) {
     arr[i] = new Array(numRows).fill(0)
   }
-
-  const [started, setStarted] = useState(false)
   const [grid, setGrid] = useState(arr)
-  useEffect(() => {
-    interval = setInterval(() => {
-      update()
-    }, 600)
-    return () => clearInterval(interval)
-  }, [grid])
+  const [running, setRunning] = useState(false)
 
   const update = () => {
+    // create a copy of the grid
+    //https://ozmoroz.com/2020/07/how-to-copy-array/
+    console.log('grid before copy: ', grid)
+
     const gridCopy = grid.map((row) => [...row]).map((col) => [...col])
 
     for (let i = 0; i < numRows; i++) {
@@ -56,23 +53,22 @@ const App: React.FC = () => {
         }
       }
     }
-
+    console.log('copy grid before setGrid: ', gridCopy)
     setGrid(gridCopy)
-    //setGrid((_) =>
-    // Important: read `state` instead of `this.state` when updating.
-    //gridCopy.map((row: any) => [...row]).map((col: any) => [...col])
-    //)
-
-    console.log('update')
   }
 
-  const start = () => {
-    if (started) setStarted(false)
-    else setStarted(true)
+  const handleRunClick = () => {
+    if (running) {
+    } else {
+      intervalId = setInterval(() => {
+        update()
+      }, 1000)
+    }
+    setRunning(!running)
   }
 
   const stop = () => {
-    clearInterval(interval)
+    clearInterval(intervalId)
   }
 
   const clear = () => {
@@ -99,7 +95,7 @@ const App: React.FC = () => {
   return (
     <>
       <div>Game of Life</div>
-      <button onClick={() => start()}>Start</button>
+      <button onClick={() => handleRunClick()}>Start</button>
       <button onClick={() => stop()}>Stop</button>
       <button onClick={() => clear()}>Clear</button>
       <div
