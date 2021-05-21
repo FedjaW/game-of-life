@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import useInterval from './useInterval'
 
 const numRows = 20
 const numCols = 20
@@ -15,11 +16,11 @@ const App: React.FC = () => {
   const [grid, setGrid] = useState(arr)
   const [running, setRunning] = useState(false)
 
+  useInterval(() => update(), running ? 1000 : null)
+
   const update = () => {
     // create a copy of the grid
-    //https://ozmoroz.com/2020/07/how-to-copy-array/
-    console.log('grid before copy: ', grid)
-
+    // https://ozmoroz.com/2020/07/how-to-copy-array/
     const gridCopy = grid.map((row) => [...row]).map((col) => [...col])
 
     for (let i = 0; i < numRows; i++) {
@@ -53,22 +54,16 @@ const App: React.FC = () => {
         }
       }
     }
-    console.log('copy grid before setGrid: ', gridCopy)
+
     setGrid(gridCopy)
   }
 
   const handleRunClick = () => {
-    if (running) {
-    } else {
-      intervalId = setInterval(() => {
-        update()
-      }, 1000)
-    }
-    setRunning(!running)
+    setRunning(true)
   }
 
   const stop = () => {
-    clearInterval(intervalId)
+    setRunning(false)
   }
 
   const clear = () => {
