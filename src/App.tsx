@@ -1,27 +1,28 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import useInterval from './useInterval'
 
-const numRows = 20
-const numCols = 20
-const cellSize = '5px'
-let intervalId: any
+const numRows = 50
+const numCols = numRows
+const cellSize = '10px'
 
 const App: React.FC = () => {
-  // Creates the grid matrix filled with dead cells
-  // dead cell = 0
-  const arr = new Array(numCols)
-  for (let i = 0; i < arr.length; i++) {
-    arr[i] = new Array(numRows).fill(0)
+  // Creates a grid matrix filled with dead cells.
+  const emptyGrid = new Array(numCols)
+  for (let i = 0; i < emptyGrid.length; i++) {
+    emptyGrid[i] = new Array(numRows).fill(0)
   }
-  const [grid, setGrid] = useState(arr)
+
+  const [intervalTime, setIntervalTime] = useState(500)
+  const [grid, setGrid] = useState(emptyGrid)
   const [running, setRunning] = useState(false)
 
-  useInterval(() => update(), running ? 1000 : null)
+  useInterval(() => update(), running ? intervalTime : null)
 
   const update = () => {
     // create a copy of the grid
     // https://ozmoroz.com/2020/07/how-to-copy-array/
-    const gridCopy = grid.map((row) => [...row]).map((col) => [...col])
+    //const gridClone = grid.map((row) => [...row]).map((col) => [...col])
+    const gridClone = [...grid].map((row) => [...row])
 
     for (let i = 0; i < numRows; i++) {
       for (let j = 0; j < numCols; j++) {
@@ -39,35 +40,23 @@ const App: React.FC = () => {
 
         if (grid[j][i] === 0) {
           if (sumNeighbour === 3) {
-            gridCopy[j][i] = 1
+            gridClone[j][i] = 1
           }
         } else if (grid[j][i] === 1) {
           if (sumNeighbour < 2) {
-            gridCopy[j][i] = 0
+            gridClone[j][i] = 0
           }
           if (sumNeighbour === 2 || sumNeighbour === 3) {
-            gridCopy[j][i] = 1
+            gridClone[j][i] = 1
           }
           if (sumNeighbour > 3) {
-            gridCopy[j][i] = 0
+            gridClone[j][i] = 0
           }
         }
       }
     }
 
-    setGrid(gridCopy)
-  }
-
-  const handleRunClick = () => {
-    setRunning(true)
-  }
-
-  const stop = () => {
-    setRunning(false)
-  }
-
-  const clear = () => {
-    setGrid(arr)
+    setGrid(gridClone)
   }
 
   const toggleCell = (indexRow: number, indexCol: number) => {
@@ -90,9 +79,14 @@ const App: React.FC = () => {
   return (
     <>
       <div>Game of Life</div>
-      <button onClick={() => handleRunClick()}>Start</button>
-      <button onClick={() => stop()}>Stop</button>
-      <button onClick={() => clear()}>Clear</button>
+      <button
+        style={{ backgroundColor: running ? 'lightgreen' : 'white' }}
+        onClick={() => setRunning(true)}
+      >
+        Start
+      </button>
+      <button onClick={() => setRunning(false)}>Stop</button>
+      <button onClick={() => setGrid(emptyGrid)}>Clear</button>
       <div
         style={{
           display: 'grid',
@@ -111,7 +105,7 @@ const App: React.FC = () => {
                 borderStyle: 'solid',
                 borderColor: 'black',
                 backgroundColor:
-                  grid[indexRow][indexCol] === 1 ? 'blue' : 'red',
+                  grid[indexRow][indexCol] === 1 ? 'black' : 'white',
               }}
             />
           ))
