@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react'
 
-const numRows = 20
-const numCols = 20
-const cellSize = '5px'
+const numRows = 30
+const numCols = 30
+const cellSize = '10px'
 let interval: any
 
 const App: React.FC = () => {
@@ -16,11 +16,14 @@ const App: React.FC = () => {
   const [started, setStarted] = useState(false)
   const [grid, setGrid] = useState(arr)
   useEffect(() => {
-    interval = setInterval(() => {
-      update()
-    }, 600)
+    if (started) {
+      interval = setInterval(() => {
+        update()
+      }, 600)
+    }
+
     return () => clearInterval(interval)
-  }, [grid])
+  }, [grid, started])
 
   const update = () => {
     const gridCopy = grid.map((row) => [...row]).map((col) => [...col])
@@ -58,21 +61,16 @@ const App: React.FC = () => {
     }
 
     setGrid(gridCopy)
-    //setGrid((_) =>
-    // Important: read `state` instead of `this.state` when updating.
-    //gridCopy.map((row: any) => [...row]).map((col: any) => [...col])
-    //)
-
-    console.log('update')
   }
 
   const start = () => {
-    if (started) setStarted(false)
-    else setStarted(true)
+    setStarted(true)
   }
 
   const stop = () => {
     clearInterval(interval)
+
+    setStarted(false)
   }
 
   const clear = () => {
@@ -116,11 +114,11 @@ const App: React.FC = () => {
               style={{
                 width: cellSize,
                 height: cellSize,
-                borderWidth: '0.1px',
+                borderWidth: '0.09px',
                 borderStyle: 'solid',
-                borderColor: 'black',
+                borderColor: 'lightgrey',
                 backgroundColor:
-                  grid[indexRow][indexCol] === 1 ? 'blue' : 'red',
+                  grid[indexRow][indexCol] === 1 ? 'black' : 'white',
               }}
             />
           ))
