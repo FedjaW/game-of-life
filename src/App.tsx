@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react'
+import { toggleCell } from './ToggleCell'
+import { update } from './UpdateGrid'
 
-const numRows = 30
-const numCols = 30
+const numRows = 60
+const numCols = 60
 const cellSize = '10px'
 let interval: any
 
@@ -18,50 +20,13 @@ const App: React.FC = () => {
   useEffect(() => {
     if (started) {
       interval = setInterval(() => {
-        update()
+        const updatedGrid = update(grid, numRows, numCols)
+        setGrid(updatedGrid)
       }, 600)
     }
 
     return () => clearInterval(interval)
   }, [grid, started])
-
-  const update = () => {
-    const gridCopy = grid.map((row) => [...row]).map((col) => [...col])
-
-    for (let i = 0; i < numRows; i++) {
-      for (let j = 0; j < numCols; j++) {
-        const n1 = j - 1 < 0 ? 0 : grid[j - 1][i]
-        const n2 = j - 1 < 0 || i - 1 < 0 ? 0 : grid[j - 1][i - 1]
-        const n3 = j - 1 < 0 || i + 1 === numRows ? 0 : grid[j - 1][i + 1]
-        const n4 = j + 1 === numCols ? 0 : grid[j + 1][i]
-        const n5 = j + 1 === numCols || i - 1 < 0 ? 0 : grid[j + 1][i - 1]
-        const n6 =
-          j + 1 === numCols || i + 1 === numRows ? 0 : grid[j + 1][i + 1]
-        const n7 = i + 1 === numRows ? 0 : grid[j][i + 1]
-        const n8 = i - 1 < 0 ? 0 : grid[j][i - 1]
-
-        const sumNeighbour = n1 + n2 + n3 + n4 + n5 + n6 + n7 + n8
-
-        if (grid[j][i] === 0) {
-          if (sumNeighbour === 3) {
-            gridCopy[j][i] = 1
-          }
-        } else if (grid[j][i] === 1) {
-          if (sumNeighbour < 2) {
-            gridCopy[j][i] = 0
-          }
-          if (sumNeighbour === 2 || sumNeighbour === 3) {
-            gridCopy[j][i] = 1
-          }
-          if (sumNeighbour > 3) {
-            gridCopy[j][i] = 0
-          }
-        }
-      }
-    }
-
-    setGrid(gridCopy)
-  }
 
   const start = () => {
     setStarted(true)
@@ -77,21 +42,9 @@ const App: React.FC = () => {
     setGrid(arr)
   }
 
-  const toggleCell = (indexRow: number, indexCol: number) => {
-    const updatedArray = grid.map((row, i) => {
-      row.map((col: any, j: number) => {
-        if (indexRow === j && indexCol === i) {
-          const value = grid[j][i] === 0 ? 1 : 0
-          return (grid[j][i] = value)
-        } else {
-          return grid[j][i]
-        }
-      })
-
-      return grid[i]
-    })
-
-    setGrid(updatedArray)
+  const handleToggleCell = (indexRow: number, indexCol: number) => {
+    const updatedGrid = toggleCell(grid, indexRow, indexCol)
+    setGrid(updatedGrid)
   }
 
   return (
@@ -110,7 +63,7 @@ const App: React.FC = () => {
           rows.map((col: any, indexCol: number) => (
             <div
               key={indexCol}
-              onClick={() => toggleCell(indexRow, indexCol)}
+              onClick={() => handleToggleCell(indexRow, indexCol)}
               style={{
                 width: cellSize,
                 height: cellSize,
