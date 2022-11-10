@@ -20,8 +20,8 @@ On `http://localhost:3000/` the **Game of Life** will pop up.
 
 ## Features to implement
 
-- [ ] As a user, I want to select interesting presets
-- [ ] As a user, I want to increase the movement speed of the cells
-- [ ] As a user, I want to have a "better" looking UI
-- [ ] As a user, I want to select the color of background and cells
-- [ ] As a user, I want to select the size of the canvas
+- [ ] Add interesting presets
+- [ ] Add input field to set the movement speed
+- [ ] Beautify UI
+- [ ] Make background color and cell color customizable
+- [ ] Make size of the canvas variable
