@@ -15,7 +15,7 @@ const App: React.FC = () => {
     arr[i] = new Array(numRows).fill(0)
   }
 
-  const [isRunning, setStarted] = useState(false)
+  const [isRunning, setRunning] = useState(false)
   const [grid, setGrid] = useState(arr)
   useEffect(() => {
     if (isRunning) {
@@ -29,13 +29,13 @@ const App: React.FC = () => {
   }, [grid, isRunning])
 
   const start = () => {
-    setStarted(true)
+    setRunning(true)
   }
 
   const stop = () => {
     clearInterval(interval)
 
-    setStarted(false)
+    setRunning(false)
   }
 
   const clear = () => {
@@ -55,7 +55,7 @@ const App: React.FC = () => {
       <button onClick={() => clear()}>Clear</button>
       <label>
         Game is running
-        <input readOnly type='checkbox' checked={isRunning} />
+        <input readOnly type="checkbox" checked={isRunning} />
       </label>
       <div
         style={{
